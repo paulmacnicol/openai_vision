@@ -4,11 +4,6 @@ import base64
 import os
 import argparse
 import yaml
-import logging
-
-# Configure logging
-log_file = '/config/custom_components/openai_vision/openai-vision.log'
-logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # Load settings from YAML
 with open('/config/custom_components/openai_vision/settings.yaml', 'r') as f:
@@ -48,9 +43,6 @@ def get_prompt_and_style(prompt_name, style_name=None):
         data = yaml.safe_load(f)
     prompt_text = data['prompts'].get(prompt_name, {}).get('description', '')
     style_text = data['styles'].get(style_name, {}).get('description', '') if style_name else ""
-    logging.info(f"Loaded prompt for {prompt_name}: {prompt_text}")  # Log the loaded prompt
-    if style_name:
-        logging.info(f"Loaded style for {style_name}: {style_text}")  # Log the loaded style
     return f"{prompt_text} {style_text}"
 
 def get_response(image_path, model, prompt_text):
@@ -81,11 +73,9 @@ def get_response(image_path, model, prompt_text):
         ],
         "max_tokens": 300
     }
-    logging.info(f"Sending prompt to OpenAI API: {prompt_text}")  # Add logging for the prompt
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     response.raise_for_status()
     response_data = response.json()
-    logging.info(f"Received response from OpenAI API: {response_data}")  # Add logging for the response
     return response_data['choices'][0]['message']['content']
 
 def write_response(response, file_path, prompt_text=None, image_path=None, settings=None, is_json=False):
@@ -103,49 +93,22 @@ def write_response(response, file_path, prompt_text=None, image_path=None, setti
     with open(file_path, "w") as file:
         json.dump(json_data, file, indent=4)
 
-def update_sensor(entity_id, state, attributes):
-    """Update the sensor in Home Assistant with the given state and attributes."""
+def update_sensor(entity_id, json_data):
+    """Update the sensor in Home Assistant with the JSON data."""
     url = f"{HA_URL}/api/states/{entity_id}"
     headers = {
         "Authorization": f"Bearer {HASS_TOKEN}",
         "Content-Type": "application/json"
     }
     payload = {
-        "state": state,
-        "attributes": attributes
+        "state": "updated",
+        "attributes": json_data
     }
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
     try:
-        response = requests.post(url, headers=headers, json=payload)  # Use json parameter to ensure proper JSON encoding
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        logging.error(f"Failed to update sensor: {e}\nResponse: {response.text}")
-        logging.error(f"Payload: {json.dumps(payload, indent=4)}")  # Add payload logging
-
-def strip_code_blocks(response):
-    """Strip code block formatting from the response."""
-    if response.startswith("```json") and response.endswith("```"):
-        response = response[7:-3].strip()
-    elif response.startswith("```") and response.endswith("```"):
-        response = response[3:-3].strip()
-    return response
-
-def extract_state_and_attributes_from_json(response):
-    """Extract the state and attributes from the JSON response."""
-    try:
-        response = strip_code_blocks(response)  # Strip code block formatting if present
-        response_json = json.loads(response)
-        # Determine state and attributes based on the number of key-value pairs
-        if len(response_json) == 1:
-            state_key = list(response_json.keys())[0]
-            state_value = response_json[state_key]
-            return state_value, {"response": response_json}
-        else:
-            state = "Updated"
-            attributes = response_json
-            return state, attributes
-    except json.JSONDecodeError as e:
-        logging.error(f"Error decoding JSON: {e}")
-        return "Unknown", {}
+        print(f"Failed to update sensor: {e}\nResponse: {response.text}")
 
 def main():
     """Main function to process the image."""
@@ -158,23 +121,19 @@ def main():
 
     args = parser.parse_args()
 
-    logging.info(f"Command line arguments: model={args.model}, camera={args.camera}, prompt={args.prompt}, style={args.style}, json={args.json}")
-
     if args.json:
         image_path = os.path.join(MEDIA_DIR, f"{args.prompt}.jpg")
         response_path = os.path.join(RESPONSE_DIR, f"{args.prompt}.json")
-        
-        prompt_text = get_prompt_and_style(args.prompt, args.style).strip()
+
         take_snapshot(args.camera, image_path)
-        response = get_response(image_path, args.model, prompt_text)
-        state, attributes = extract_state_and_attributes_from_json(response)  # Extract state and attributes from JSON response
-        update_sensor(f"sensor.openai_vision_{args.prompt.lower()}_response", state, attributes)  # Update sensor state and attributes
-        print(response)  # Print only the response content
+        response = get_response(image_path, args.model, "")
+        write_response(response, response_path, is_json=True)
+        update_sensor(f"sensor.openai_vision_{args.prompt.lower()}_response", response)
+        print(json.dumps(response, indent=4))
     else:
         combined_text = get_prompt_and_style(args.prompt, args.style)
 
         if not combined_text.strip():
-            logging.error(f"Prompt '{args.prompt}' or style '{args.style}' not found in prompts.yaml")
             print(f"Prompt '{args.prompt}' or style '{args.style}' not found in prompts.yaml")
             return
 
@@ -182,9 +141,7 @@ def main():
         response_path = os.path.join(RESPONSE_DIR, f"{args.prompt}.json")
 
         take_snapshot(args.camera, image_path)
-        logging.info(f"Combined prompt text: {combined_text}")  # Add logging for combined text
         response = get_response(image_path, args.model, combined_text)
-        response = strip_code_blocks(response)
 
         settings = {
             "model": args.model,
@@ -199,7 +156,7 @@ def main():
             "image": f"{HA_URL}/local/{os.path.basename(image_path)}",
             "settings": settings
         }
-        update_sensor(f"sensor.openai_vision_{args.prompt.lower()}_response", "updated", json_data)  # Keep "updated" state for non-JSON responses
+        update_sensor(f"sensor.openai_vision_{args.prompt.lower()}_response", json_data)
         print(json.dumps(json_data, indent=4))
 
 if __name__ == "__main__":

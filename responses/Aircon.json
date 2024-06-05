@@ -1,0 +1,10 @@
+{
+    "response": "Off",
+    "prompt": "In the top left of this picture is an air conditioner. You can tell if it's working because you can see if the flap is open or closed. I want you t respond with one word - 'On' if you can see the flap open (indicating that the Air Conditioner is turner on), or 'Off' if you cant see the flap on the bottom of the A/C unit open, or cant see it at all ",
+    "image": "https://ravensnest.soundcheckvn.com/local/Aircon.jpg",
+    "settings": {
+        "model": "gpt-4o",
+        "style": null,
+        "camera_entity": "camera.living_room_camera"
+    }
+}
