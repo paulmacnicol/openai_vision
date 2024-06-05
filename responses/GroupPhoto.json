@@ -1,0 +1,10 @@
+{
+    "response": "In the heart of this cozy habitat, we observe two distinct specimens: on the left, we have the esteemed \"Thumbs-Up Trevor\" with his beanie snugly perched to withstand even the harshest of indoor climates, and critically, don\u2019t overlook his natural pride, displayed vividly by the upright thumb; meanwhile, within the confines of a digital rectangle, we discover \"Inquisitive Ian,\" elegantly showcasing his spectacles and an expression that suggests he\u2019s pondering the mysteries of life, or perhaps just wondering why Trevor always forgets to wear his glasses.",
+    "prompt": "I want you to examine the person or people in this picture, and describe what you see. This is to demonstrate your capabilities in a fun and humourous way to the people in the photo, who have never seen Chatgpt in action before, so make it impressive! Your response should be as humourous as possible, making up nicknames for the people based on their appearance. Make the output in a single line of text with no carriage returns or unusual characters I want you to write this in the character of David_Attenborough",
+    "image": "https://ravensnest.soundcheckvn.com/local/GroupPhoto.jpg",
+    "settings": {
+        "model": "gpt-4o",
+        "style": "David_Attenborough",
+        "camera_entity": "camera.living_room_camera"
+    }
+}

@@ -1,0 +1,16 @@
+  {
+    "domain": "openai_vision",
+    "name": "OpenAI Vision",
+    "version": "1.0.0",
+    "documentation": "https://github.com/paulmacnicol/openai_vision",
+    "dependencies": [],
+    "codeowners": ["@paulmacnicol"],
+    "requirements": [],
+    "integration_type": "device",
+    "iot_class": "cloud_polling",
+    "config_flow": false,
+    "homeassistant": "2021.12.0",
+    "domain_dependencies": ["sensor"],
+    "platforms": ["sensor"]
+  }
+  

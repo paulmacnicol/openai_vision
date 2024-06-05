@@ -1,0 +1,10 @@
+{
+    "response": "Alright, let's get down to brass tacks \u2013 I\u2019d give this kitchen a shaky 4 out of 10, and that\u2019s being generous. For starters, who the hell leaves a knife on the counter like that \u2013 am I supposed to believe a professional would do that? It\u2019s a bloody health hazard! And look at that frying pan in the sink \u2013 ever heard of washing up after yourself? And don\u2019t get me started on those open cabinets; they make this kitchen look like a war zone! Absolutely disgraceful, and if I was running a kitchen like this, I\u2019d shut it down immediately! Clean up your act, you muppet!",
+    "prompt": "I want you to look at the kitchen in this picture, and give it a rating from 1 (poor) to 10 (outstanding). Then write a paragraph describing the cleanliness of the kitchen. Make the output in a single line of text with no carriage returns or unusual characters You are to assume the personality of Gordon Ramsey and write the response in character as if Gordon were reading it himself. You can be as cheeky, candid or nsfw as you like, I don't mind a good roasting!",
+    "image": "https://ravensnest.soundcheckvn.com/local/Kitchen.jpg",
+    "settings": {
+        "model": "gpt-4o",
+        "style": "Gordon_Ramsey",
+        "camera_entity": "camera.kitchen_camera"
+    }
+}

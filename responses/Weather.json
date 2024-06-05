@@ -1,0 +1,10 @@
+{
+    "response": "Good evening, currently, we are experiencing a rainy and overcast condition with moderate rainfall visible, the atmosphere appears quite cloudy and damp, and in the coming hours, we can expect the rain to persist, potentially increasing in intensity, with little to no clearing expected.",
+    "prompt": "I want you to look at the weather in this picture, and summarise the current conditions, to create a short weather report including a prediction of the weather in the next hours. Make the output in a single line of text with no carriage returns or unusual characters. Your response will be read aloud, so it should be written in the style of a BBC Presenter, very formal and correct.",
+    "image": "https://ravensnest.soundcheckvn.com/local/Weather.jpg",
+    "settings": {
+        "model": "gpt-4o",
+        "style": "BBC",
+        "camera_entity": "camera.webcam"
+    }
+}
