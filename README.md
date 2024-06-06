@@ -7,6 +7,7 @@ Overview
 --------
 
 The OpenAI Vision Integration is a custom component for Home Assistant that leverages OpenAI's GPT models to analyze images captured by your home cameras. This integration can generate insightful descriptions, identify objects, and even add a touch of humor to your snapshots. The results are saved in JSON format and can be used to update Home Assistant sensors.
+This integration allows you to add hundreds of sensors to your home assistant installation, using existing security cameras or cheap webcams. Add a sensor to check if the beds are made and the dishes are done, and cut off the kids internet until they are. Remind me if I havent got my Rubbish bins out on collection day. Let me know if I have clothes on the line and its going to rain. And so on - theres a huge number of opportunities we can exploit with this software, so I've tried to keep it as straightforward as possible to modify, and I look forward to hearing your suggestions and implementations. 
 
 Features
 --------
