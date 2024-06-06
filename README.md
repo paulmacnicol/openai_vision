@@ -60,7 +60,7 @@ Configure your settings in `/config/custom_components/openai_vision/settings.yam
 
 ### Prompts and Styles
 
-Define your prompts and styles in `/config/custom_components/openai_vision/prompts.yaml`:
+Define your prompts and styles in `/config/custom_components/openai_vision/prompts.yaml. Below are just examples,the actual prompts.yaml has much longer prompts. Customise them to suit your environment`:
 
     models:
       - gpt-4o
@@ -139,7 +139,9 @@ Example shell command invocation:
     shell_command:
       run_openai_weather: "python3 /config/custom_components/openai_vision/image2text.py --camera camera.webcam --prompt Weather --style BBC --model gpt-4o"
 
-Trigger this command from the Developer Tools screen, an automation, or a Lovelace button to run the image processing script.
+Trigger this command from the Developer Tools screen, an automation, or a Lovelace button to run the image processing script. The output is a weather report in the style of a BBC reporter, based on the photo from the camera specified.
+
+The response is then saved as an attribute in sensor.openai_vision_weather_response. The response includes the prompt, model, camera, and style in the json attributes, making it easy to present the results or process further
 
 Required Tokens and Information
 -------------------------------
@@ -163,4 +165,57 @@ The URL of your Home Assistant instance (e.g., `https://your-home-assistant-url`
 Sensor Integration
 ------------------
 
-The OpenAI Vision integration updates Home Assistant sensors with the analyzed data. Depending on whether the
+The OpenAI Vision integration updates Home Assistant sensors with the analyzed data. Depending on whether the `--json` flag is used, the sensor output differs:
+
+*   **Without `--json` Flag**: The response is treated as plain text, suitable for notifications, TTS, or display on a dashboard. The text is saved directly in the sensor's state.
+*   **With `--json` Flag**: The response is treated as a JSON object. If it reports a single entity (e.g., a light bulb), the sensor's state will show "on" or "off", matching the current state of the light bulb. If multiple objects are being monitored, the information is saved as attributes in the sensor.
+
+### Example Sensor Template Configuration
+
+The following template sensor configuration extracts specific attributes from the JSON response and presents them as individual entities in Home Assistant:
+
+    sensor:
+      - platform: template
+        sensors:
+          lightsensor_livingroom_response:
+            friendly_name: "Lightsensor Livingroom Response"
+            value_template: "{{ states.sensor.openai_vision_lightsensor_livingroom_response.state }}"
+            attribute_templates:
+              dj_lights: "{{ state_attr('sensor.openai_vision_lightsensor_livingroom_response', 'lightsensor_livingroom.dj_lights') }}"
+              ceiling_lights: "{{ state_attr('sensor.openai_vision_lightsensor_livingroom_response', 'lightsensor_livingroom.ceiling_lights') }}"
+
+*   **`value_template`**: Extracts the main state from the JSON response.
+*   **`attribute_templates`**: Extracts specific attributes from the JSON response and presents them as key-value pairs.
+
+Logging
+-------
+
+Logs are stored in `/config/custom_components/openai_vision/openai-vision.log`. The logging includes information about prompts, API responses, and errors.
+
+Prompts and Styles
+------------------
+
+The `prompts.yaml` file contains various prompts and styles that define how the images should be analyzed. Here are the main categories that are included, you can create your own or modify these to suit your requirements. Just remember that the prompt name must match in prompts.yaml, and the --prompt in the shell command, and the name of the sensor that receives the data  - see the examples included
+
+### Prompts
+
+*   **Weather**: Summarize the weather in the picture.
+*   **Curtains**: Identify if the curtains are open or closed.
+*   **Kitchen**: Rate the cleanliness of the kitchen from 1 to 10 and describe it.
+*   **LivingRoom**: Describe the ambience of the room and suggest 3 appropriate songs.
+*   **Garage**: List all items you see in the picture.
+*   **GroupPhoto**: Humorously describe the people in the group photo.
+*   **Aircon**: Check if the air conditioner is on or off.
+*   **LivingroomSensor**: Identify and count items in the room and present the data in JSON.
+*   **wherearemyglasses**: Find the glasses in the photo.
+*   **bedstatus**: Check if the bed is made or identify the person's activity.
+*   **lightsensor\_livingroom**: Determine the status of ceiling and DJ lights in JSON.
+
+### Styles
+
+*   **BBC**: Formal and correct, suitable for reading aloud.
+*   **Gordon\_Ramsey**: Cheeky and candid, in the style of the famous chef.
+*   **Snoop\_Dogg**: Written in the character of Snoop Dogg.
+*   **David\_Attenborough**: In the style of David Attenborough.
+*   **Jarvis**: In the style of Jarvis from Ironman.
+*   **json**: Response in simple JSON format with no additional comments.
