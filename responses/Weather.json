@@ -1,9 +1,9 @@
 {
-    "response": "I cannot provide a weather report based on this image as it depicts an indoor scene with an individual lying in bed, and there are no visible weather conditions to describe.",
+    "response": "Good morning, viewers. Currently, we're observing a bright and sunny morning with scattered clouds and a gentle breeze. As the day progresses, expect the sunny conditions to prevail with a slight increase in cloud cover towards the afternoon, maintaining mild temperatures and a picturesque day ahead. Perfect weather for outdoor activities.",
     "prompt": "I want you to look at the weather in this picture, and summarise the current conditions, to create a short weather report including a prediction of the weather in the next hours. Make the output in a single line of text with no carriage returns or unusual characters. Your response will be read aloud, so it should be written in the style of a BBC Presenter, very formal and correct.",
     "image": "https://ravensnest.soundcheckvn.com/local/Weather.jpg",
     "settings": {
-        "model": "gpt-4o",
+        "model": "gpt-4-turbo",
         "style": "BBC",
         "camera_entity": "camera.webcam"
     }
